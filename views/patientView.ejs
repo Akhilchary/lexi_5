@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    to book an appointment for patient
+    select a type like ENT, ortho, neuro etc
+    select available doctors from select 
+    select a time to meet the doctor
+    book a slot
+    <br>
+
+    <select name="spec" id="spec" required onclick="func2()">
+        <option value="dermatology">Dermatology</option>
+        <option value="ent">ENT</option>
+        <option value="pathology">Pathology</option>
+        <option value="ophthalmology">Ophthalmology</option>
+        <option value="neurology">Neurology</option>
+        <option value="urology">Urology</option>
+    </select>
+    <select name="doctor" id="doctor" required>
+        <option value="doctor">doctor</option>
+        
+    </select>
+    <input type="date" name="Date" id="myDate" required>
+    <button type="submit" onclick="func()">Book an appointment</button>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.0/axios.min.js" integrity="sha512-OdkysyYNjK4CZHgB+dkw9xQp66hZ9TLqmS2vXaBrftfyJeduVhyy1cOfoxiKdi4/bfgpco6REu6Rb+V2oVIRWg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+</html>
+
+<script>
+
+    //fetch all the specializations
+    let specData=[];
+    const func2=async()=>{
+        let spec=document.getElementById('spec').value;
+        await axios.get('/doctorsget/spec/'+spec)
+        .then((res)=>{
+            // console.log(res);
+            specData=res.data;
+        })
+        .catch((err)=>{
+            console.log(err);
+        });
+        let options="";
+        console.log(specData," specdata");
+        for(let i=0;i<specData.length;i++)
+        {
+            options+="<option value="+ specData[i]._id+">"+specData[i].username+"</option>";
+        }
+        // console.log(options,"options");
+        document.getElementById('doctor').innerHTML=options;
+
+    }
+
+    const func=async ()=>{
+        let spec=document.getElementById('spec').value;
+        let doctorId=document.getElementById('doctor').value;
+        let Date=document.getElementById('myDate').value;
+        let val=decodeURIComponent(document.cookie);let n=val.length;
+        let r="";
+        for(let i=n-2;i>n-26;i--) r+=val[i];
+        let patientId="";
+        for(let i=r.length-1;i>=0;i--) patientId+=r[i];
+        console.log("spec ",typeof spec);
+        console.log("doc ",typeof doctorId );
+        console.log("date ",typeof Date);
+        console.log("patId ",typeof patientId);
+        let v={"doctorId":doctorId,"patientId":patientId,"spec":spec,"Date":Date};
+        $.post('/appointment/post',v,(d,s)=>{
+            console.log(d,s);
+        })
+
+
+    }
+
+</script>

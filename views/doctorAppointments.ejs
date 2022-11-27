@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>appointments of doctor </h1>
+    <p id="p"></p>
+</body>
+
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+
+<script>
+    var a;
+    $(document).ready(()=>{
+        $.get('/appointment/get',(data,s)=>{
+            let result="";
+            a=data;
+            console.log("get ",a);
+            // console.log(a);
+            for(let i=0;i<a.length;i++)
+            {
+                let doctorName="";
+                let patientName="";
+                $.get('/patname/'+a[i].patientId,(data,s)=>{
+                    patientName=data.username;
+                })
+                $.get('/doctorname/'+a[i].doctorId,(data,s)=>{
+                    console.log(data," data")
+                    doctorName=data.username;
+                    result="<h3> Doctor name:"+doctorName+"</h3><br>"+
+                    "<h3>"+patientName+"<h3>"+
+                    "<h3> for "+a[i].spec+"</h3>"+
+                    "<h3> date: "+a[i].Date+"</h3>";
+                    console.log(result);
+                    document.getElementById('p').innerHTML=result;
+                })
+                
+                
+            }
+
+        });
+        
+
+
+    })
+    
+
+</script>
